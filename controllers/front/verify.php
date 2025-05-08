@@ -18,9 +18,6 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-use PrestaShop\PrestaShop\Adapter\ServiceLocator;
-use PrestaShop\PrestaShop\Core\Domain\Order\Command\SetInternalOrderNoteCommand;
-
 /**
  * This Controller receive customer after approval on bank payment page
  */
@@ -96,8 +93,8 @@ class Payment4VerifyModuleFrontController extends ModuleFrontController
             $responseData = json_decode($response);
 
             if ($err) {
-                $this->errors[] = "خطا در اتصال به درگاه پرداخت : <br> $err";
-
+                $this->errors[] = $this->module->getTranslator()->trans('Error Connecting to Payment Gateway', [], 'Modules.Payment4.Verify');
+                $this->errors[] = $err;
                 return;
             }
             if ($httpcode == 400 && ! $responseData->status) {
@@ -122,7 +119,7 @@ class Payment4VerifyModuleFrontController extends ModuleFrontController
                 // Validate cart
                 $cartId = (int)$this->context->cart->id;
                 if ($cartId <= 0 || ! Validate::isLoadedObject($this->context->cart)) {
-                    $this->errors[] = $this->module->l('Cart cannot be loaded');
+                    $this->errors[] = $this->module->getTranslator()->trans('Cart cannot be loaded', [], 'Modules.Payment4.Verify');
 
                     return;
                 }
@@ -154,7 +151,7 @@ class Payment4VerifyModuleFrontController extends ModuleFrontController
                     )
                 );
             } else {
-                $this->errors[] = 'Your Payment is not confirmed. Payment Status: ' . $paymentStatus;
+                $this->errors[] = $this->module->getTranslator()->trans('Your Payment is not confirmed. Payment Status: ', [], 'Modules.Payment4.Verify') . $paymentStatus;
             }
         }
     }

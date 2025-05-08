@@ -61,10 +61,14 @@ class Payment4 extends PaymentModule
 
         parent::__construct();
 
-        $this->displayName = $this->l('Payment4');
-        $this->description = $this->l('Payment4 gateway Pay with CryptoCurrencies');
+        $this->displayName = $this->trans('Payment4', [], 'Modules.Payment4.Payment4');
+        $this->description = $this->trans(
+            'Payment4 gateway Pay with CryptoCurrencies',
+            [],
+            'Modules.Payment4.Payment4'
+        );
 
-        $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
+        $this->confirmUninstall = $this->trans('Are you sure you want to uninstall?', [], 'Modules.Payment4.Payment4');
     }
 
     /**
@@ -73,7 +77,11 @@ class Payment4 extends PaymentModule
     public function install()
     {
         if ( ! extension_loaded('curl')) {
-            $this->_errors[] = $this->l('You have to enable the cURL extension on your server to install this module');
+            $this->_errors[] = $this->trans(
+                'You have to enable the cURL extension on your server to install this module',
+                [],
+                'Modules.Payment4.Payment4'
+            );
 
             return false;
         }
@@ -144,7 +152,7 @@ class Payment4 extends PaymentModule
 
         $newOption = new PaymentOption();
         $newOption->setModuleName($this->name)
-            ->setCallToActionText($this->l('Pay by Crypto'))
+            ->setCallToActionText($this->trans('Pay by Crypto', [], 'Modules.Payment4.Payment4'))
             ->setAction($this->context->link->getModuleLink($this->name, 'external', array(), true))
             ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/small-logo.png'));
 
@@ -174,17 +182,17 @@ class Payment4 extends PaymentModule
         if (false === Validate::isLoadedObject($order) || $order->module !== $this->name) {
             return '';
         }
-        
+
         // Get Order Message
-        $messages = MessageCore::getMessagesByOrderId($order->id, true);
-        $firstMessage = !empty($messages) ? $messages[0] : null;
+        $messages         = MessageCore::getMessagesByOrderId($order->id, true);
+        $firstMessage     = ! empty($messages) ? $messages[0] : null;
         $firstMessageData = $firstMessage ? json_decode($firstMessage['message'], true) : null;
 
         $this->context->smarty->assign([
             'moduleName'        => $this->name,
             'moduleDisplayName' => $this->displayName,
             'moduleLogoSrc'     => $this->getPathUri() . 'logo.png',
-            'message' => $firstMessageData,
+            'message'           => $firstMessageData,
         ]);
 
         return $this->context->smarty->fetch(
@@ -457,6 +465,17 @@ class Payment4 extends PaymentModule
         return (bool)Configuration::deleteByName(static::PAYMENT4_EXTERNAL_ENABLED)
             && (bool)Configuration::deleteByName(static::PAYMENT4_SANDBOX_MODE)
             && (bool)Configuration::deleteByName(static::PAYMENT4_API_KEY);
+    }
+
+    /**
+     * Enable the new PrestaShop translations system for the module
+     * https://devdocs.prestashop.com/1.7/modules/creation/module-translation/new-system/
+     *
+     * @return bool
+     */
+    public function isUsingNewTranslationSystem(): bool
+    {
+        return true;
     }
 
 }

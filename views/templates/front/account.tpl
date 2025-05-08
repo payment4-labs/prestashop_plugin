@@ -20,7 +20,7 @@
 {extends file='customer/page.tpl'}
 
 {block name='page_title'}
-  <h1 class="h1">{$moduleDisplayName} - {l s='Transactions' mod='payment4'}</h1>
+  <h1 class="h1">{$moduleDisplayName} - {l s='Transactions' d='Modules.Payment4.Account'}</h1>
 {/block}
 
 {block name='page_content'}
@@ -28,11 +28,11 @@
     <table class="table table-striped table-bordered">
       <thead class="thead-default">
       <tr>
-        <th>{l s='Order reference' mod='payment4'}</th>
-        <th>{l s='Payment method' mod='payment4'}</th>
-        <th>{l s='Transaction reference' mod='payment4'}</th>
-        <th>{l s='Amount' mod='payment4'}</th>
-        <th>{l s='Date' mod='payment4'}</th>
+        <th>{l s='Order reference' d='Modules.Payment4.Account'}</th>
+        <th>{l s='Payment method' d='Modules.Payment4.Account'}</th>
+        <th>{l s='Transaction reference' d='Modules.Payment4.Account'}</th>
+        <th>{l s='Amount' d='Modules.Payment4.Account'}</th>
+        <th>{l s='Date' d='Modules.Payment4.Account'}</th>
       </tr>
       </thead>
       <tbody>
@@ -48,6 +48,6 @@
       </tbody>
     </table>
   {else}
-    <div class="alert alert-info">{l s='No transaction' mod='payment4'}</div>
+    <div class="alert alert-info">{l s='No transaction' d='Modules.Payment4.Account'}</div>
   {/if}
 {/block}

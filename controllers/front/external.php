@@ -18,9 +18,6 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-
 /**
  * This Controller simulate an Validation payment gateway
  */
@@ -104,7 +101,8 @@ class Payment4ExternalModuleFrontController extends ModuleFrontController
 
         $responseData = json_decode($response);
         if ($err) {
-            $this->errors[] = "خطا در اتصال به درگاه پرداخت : <br> $err";
+            $this->errors[] = $this->module->getTranslator()->trans('Error Connecting to Payment Gateway', [], 'Modules.Payment4.External');
+            $this->errors[] = $err;
 
             return;
         }
@@ -115,7 +113,7 @@ class Payment4ExternalModuleFrontController extends ModuleFrontController
             return;
         }
 
-        // http code is 200 Process the payment data
+        // http code is 201 Process the payment data
         if ($httpcode == 201) {
             $id         = $responseData->id;
             $paymentUid = $responseData->paymentUid;

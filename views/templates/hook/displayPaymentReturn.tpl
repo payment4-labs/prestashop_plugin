@@ -12,17 +12,17 @@
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * @author    Amirhosein Taghizadeh <amirtz.dev@gmail.com>
+ * @copyright Payment4 2025
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *}
 
 <section id="{$moduleName}-displayPaymentReturn">
   {if !empty($transaction)}
-    <p>{l s='Your Payment4 Transaction ID is: %transaction%.' mod='payment4' sprintf=['%transaction%' => $transaction]}</p>
+    <p>{l s='Your Payment4 Transaction ID is: %transaction%.' sprintf=['%transaction%' => $transaction] d='Modules.Payment4.Displaypaymentreturn' }</p>
   {/if}
   {if $customer.is_logged && !$customer.is_guest}
-    <p><a href="{$transactionsLink}">{l s='See all previous transactions in your account.' mod='payment4'}</a></p>
+    <p><a href="{$transactionsLink}">{l s='See all previous transactions in your account.' d='Modules.Payment4.Displaypaymentreturn'}</a></p>
   {/if}
 </section>
 
