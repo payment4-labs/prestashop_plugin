@@ -17,6 +17,9 @@
  * @copyright Payment4 2025
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 class AdminConfigurePayment4Controller extends ModuleAdminController
 {
     public function __construct()
@@ -28,7 +31,11 @@ class AdminConfigurePayment4Controller extends ModuleAdminController
         parent::__construct();
 
         if (empty(Currency::checkPaymentCurrencies($this->module->id))) {
-            $this->warnings[] = $this->module->getTranslator()->trans('No currency has been set for this module.', [], 'Modules.Payment4.Adminconfigurepayment4controller');
+            $this->warnings[] = $this->module->getTranslator()->trans(
+                'No currency has been set for this module.',
+                [],
+                'Modules.Payment4.Adminconfigurepayment4controller'
+            );
         }
 
         $this->fields_options = [
@@ -36,26 +43,46 @@ class AdminConfigurePayment4Controller extends ModuleAdminController
                 'fields' => [
                     Payment4::PAYMENT4_EXTERNAL_ENABLED => [
                         'type' => 'bool',
-                        'title' => $this->module->getTranslator()->trans('Enable Payment4 Module', [], 'Modules.Payment4.Adminconfigurepayment4controller'),
+                        'title' => $this->module->getTranslator()->trans(
+                            'Enable Payment4 Module',
+                            [],
+                            'Modules.Payment4.Adminconfigurepayment4controller'
+                        ),
                         'validation' => 'isBool',
                         'cast' => 'intval',
                         'required' => false,
                     ],
                     Payment4::PAYMENT4_SANDBOX_MODE => [
                         'type' => 'bool',
-                        'title' => $this->module->getTranslator()->trans('SandBox Mode', [], 'Modules.Payment4.Adminconfigurepayment4controller'),
+                        'title' => $this->module->getTranslator()->trans(
+                            'SandBox Mode',
+                            [],
+                            'Modules.Payment4.Adminconfigurepayment4controller'
+                        ),
                         'validation' => 'isBool',
                         'cast' => 'intval',
                         'required' => false,
                     ],
                     Payment4::PAYMENT4_API_KEY => [
-                        'type'   => 'text',
-                        'title' => $this->module->getTranslator()->trans('API Key', [], 'Modules.Payment4.Adminconfigurepayment4controller'),
-                        'desc'   => $this->module->getTranslator()->trans('Enter a valid API Key', [], 'Modules.Payment4.Adminconfigurepayment4controller'),
+                        'type' => 'text',
+                        'title' => $this->module->getTranslator()->trans(
+                            'API Key',
+                            [],
+                            'Modules.Payment4.Adminconfigurepayment4controller'
+                        ),
+                        'desc' => $this->module->getTranslator()->trans(
+                            'Enter a valid API Key',
+                            [],
+                            'Modules.Payment4.Adminconfigurepayment4controller'
+                        ),
                     ],
                 ],
                 'submit' => [
-                    'title' => $this->module->getTranslator()->trans('Save', [], 'Modules.Payment4.Adminconfigurepayment4controller'),
+                    'title' => $this->module->getTranslator()->trans(
+                        'Save',
+                        [],
+                        'Modules.Payment4.Adminconfigurepayment4controller'
+                    ),
                 ],
             ],
         ];

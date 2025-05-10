@@ -18,7 +18,7 @@
  *}
 
 {if !empty($transaction)}
-  <section id="{$moduleName}-displayOrderDetail" class="box">
+  <section id="{$moduleName|escape:'htmlall':'UTF-8'}-displayOrderDetail" class="box">
     <p>{l s='Your Payment4 Transaction ID is: %transaction%.' sprintf=['%transaction%' => $transaction] d='Modules.Payment4.Displayorderdetail'}</p>
   </section>
 {/if}

@@ -17,18 +17,18 @@
 * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
 *}
 
-<section id="{$moduleName}-displayAdminOrderMainBottom">
+<section id="{$moduleName|escape:'htmlall':'UTF-8'}-displayAdminOrderMainBottom">
     <div class="card mt-2">
         <div class="card-header">
             <h3 class="card-header-title">
-                <img src="{$moduleLogoSrc}" alt="{$moduleDisplayName}" width="20" height="20">
-                {$moduleDisplayName}
+                <img src="{$moduleLogoSrc|escape:'htmlall':'UTF-8'}" alt="{$moduleDisplayName|escape:'htmlall':'UTF-8'}" width="20" height="20">
+                {$moduleDisplayName|escape:'htmlall':'UTF-8'}
             </h3>
         </div>
         <div class="card-body">
             {if $message}
                 {foreach $message as $key => $value}
-                    <p>{$key} : {$value}</p>
+                    <p>{$key|escape:'htmlall':'UTF-8'} : {$value|escape:'htmlall':'UTF-8'}</p>
                 {/foreach}
             {/if}
         </div>

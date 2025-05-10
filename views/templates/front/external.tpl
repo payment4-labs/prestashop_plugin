@@ -20,7 +20,7 @@
 
 {block name="content"}
     <section id="payment4-external" class="card card-block mb-2 p-2">
-        <a href="{$action}" class="btn btn-primary">
+        <a href="{$action|escape:'htmlall':'UTF-8'}" class="btn btn-primary">
             {l s='Back To Cart' d='Modules.Payment4.External'}
         </a>
     </section>

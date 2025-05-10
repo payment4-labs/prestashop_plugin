@@ -17,12 +17,12 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *}
 
-<section id="{$moduleName}-displayPaymentReturn">
+<section id="{$moduleName|escape:'htmlall':'UTF-8'}-displayPaymentReturn">
   {if !empty($transaction)}
     <p>{l s='Your Payment4 Transaction ID is: %transaction%.' sprintf=['%transaction%' => $transaction] d='Modules.Payment4.Displaypaymentreturn' }</p>
   {/if}
   {if $customer.is_logged && !$customer.is_guest}
-    <p><a href="{$transactionsLink}">{l s='See all previous transactions in your account.' d='Modules.Payment4.Displaypaymentreturn'}</a></p>
+    <p><a href="{$transactionsLink|escape:'htmlall':'UTF-8'}">{l s='See all previous transactions in your account.' d='Modules.Payment4.Displaypaymentreturn'}</a></p>
   {/if}
 </section>
 

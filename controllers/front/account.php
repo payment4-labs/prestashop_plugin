@@ -17,7 +17,9 @@
  * @copyright Payment4 2025
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 /**
  * This Controller display transactions in customer account
  */
@@ -41,7 +43,9 @@ class Payment4AccountModuleFrontController extends ModuleFrontController
         parent::initContent();
 
         $orderPaymentsQuery = new DbQuery();
-        $orderPaymentsQuery->select('op.order_reference, op.amount, op.id_currency, op.payment_method, op.transaction_id, op.card_number, op.card_brand, op.card_expiration, op.card_holder, op.date_add');
+        $orderPaymentsQuery->select(
+            'op.order_reference, op.amount, op.id_currency, op.payment_method, op.transaction_id, op.card_number, op.card_brand, op.card_expiration, op.card_holder, op.date_add'
+        );
         $orderPaymentsQuery->from('order_payment', 'op');
         $orderPaymentsQuery->innerJoin('orders', 'o', 'op.order_reference = o.reference');
         $orderPaymentsQuery->where('o.id_customer = ' . (int) $this->context->customer->id);
@@ -56,18 +60,10 @@ class Payment4AccountModuleFrontController extends ModuleFrontController
                     (int) $orderPayment['id_currency']
                 );
 
-                if (version_compare(_PS_VERSION_, '8', '>=')) {
-                    $formattedDate = Tools::displayDate(
-                        $orderPayment['date_add'],
-                        true
-                    );
-                } else {
-                    $formattedDate = Tools::displayDate(
-                        $orderPayment['date_add'],
-                        (int) $this->context->language->id,
-                        true
-                    );
-                }
+                $formattedDate = Tools::displayDate(
+                    $orderPayment['date_add'],
+                    true
+                );
                 $orderPayments[$key]['date_formatted'] = $formattedDate;
             }
         }

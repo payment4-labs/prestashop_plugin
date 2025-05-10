@@ -17,7 +17,9 @@
  * @copyright Payment4 2025
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 /**
  * This Controller simulate an Validation payment gateway
  */
@@ -29,41 +31,45 @@ class Payment4ExternalModuleFrontController extends ModuleFrontController
     public function postProcess()
     {
         if (false === $this->checkIfContextIsValid() || false === $this->checkIfPaymentOptionIsAvailable()) {
-            Tools::redirect($this->context->link->getPageLink(
-                'order',
-                true,
-                (int) $this->context->language->id,
-                [
-                    'step' => 1,
-                ]
-            ));
+            Tools::redirect(
+                $this->context->link->getPageLink(
+                    'order',
+                    true,
+                    (int) $this->context->language->id,
+                    [
+                        'step' => 1,
+                    ]
+                )
+            );
         }
 
         $customer = new Customer($this->context->cart->id_customer);
 
         if (false === Validate::isLoadedObject($customer)) {
-            Tools::redirect($this->context->link->getPageLink(
-                'order',
-                true,
-                (int) $this->context->language->id,
-                [
-                    'step' => 1,
-                ]
-            ));
+            Tools::redirect(
+                $this->context->link->getPageLink(
+                    'order',
+                    true,
+                    (int) $this->context->language->id,
+                    [
+                        'step' => 1,
+                    ]
+                )
+            );
         }
 
         $amount = $this->context->cart->getOrderTotal(true);
 
         // Payment4
-        $url     = "https://service.payment4.com/api/v1/payment";
+        $url = 'https://service.payment4.com/api/v1/payment';
         $headers = [
-            "x-api-key: " . Configuration::get(Payment4::PAYMENT4_API_KEY),
-            "Content-Type: application/json",
+            'x-api-key: ' . Configuration::get(Payment4::PAYMENT4_API_KEY),
+            'Content-Type: application/json',
         ];
 
         $currency = $this->context->currency->iso_code;
-        if ($currency === "IRR"){
-            $currency = "IRT";
+        if ($currency === 'IRR') {
+            $currency = 'IRT';
             (int) $amount /= 10;
         }
         // callback
@@ -76,14 +82,14 @@ class Payment4ExternalModuleFrontController extends ModuleFrontController
         $callback_base_url = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . $parsedUrl['path'];
 
         $payload = [
-            "amount"      => $amount,
-            "callbackUrl" => $callback_base_url,
-            "language"    => $this->getLanguageCode(),
-            "currency"    => $currency,
-            "sandBox"     => (bool)Configuration::get(Payment4::PAYMENT4_SANDBOX_MODE),
+            'amount' => $amount,
+            'callbackUrl' => $callback_base_url,
+            'language' => $this->getLanguageCode(),
+            'currency' => $currency,
+            'sandBox' => (bool) Configuration::get(Payment4::PAYMENT4_SANDBOX_MODE),
         ];
 
-        if (!empty($callback_params)){
+        if (!empty($callback_params)) {
             $payload['callbackParams'] = $callback_params;
         }
 
@@ -95,18 +101,22 @@ class Payment4ExternalModuleFrontController extends ModuleFrontController
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
         $response = curl_exec($ch);
-        $err      = curl_error($ch);
+        $err = curl_error($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
         $responseData = json_decode($response);
         if ($err) {
-            $this->errors[] = $this->module->getTranslator()->trans('Error Connecting to Payment Gateway', [], 'Modules.Payment4.External');
+            $this->errors[] = $this->module->getTranslator()->trans(
+                'Error Connecting to Payment Gateway',
+                [],
+                'Modules.Payment4.External'
+            );
             $this->errors[] = $err;
 
             return;
         }
-        if ($httpcode == 400 && ! $responseData->status) {
+        if ($httpcode == 400 && !$responseData->status) {
             $this->errors[] = $responseData->errorCode;
             $this->errors[] = $responseData->message;
 
@@ -115,12 +125,11 @@ class Payment4ExternalModuleFrontController extends ModuleFrontController
 
         // http code is 201 Process the payment data
         if ($httpcode == 201) {
-            $id         = $responseData->id;
+            $id = $responseData->id;
             $paymentUid = $responseData->paymentUid;
             header("Location: $responseData->paymentUrl");
-            exit();
+            exit;
         }
-
     }
 
     /**
@@ -140,12 +149,13 @@ class Payment4ExternalModuleFrontController extends ModuleFrontController
     public function callBackUrl()
     {
         return (Configuration::get(
-                'PS_SSL_ENABLED'
-            ) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __PS_BASE_URI__ . 'module/payment4/verify';
+            'PS_SSL_ENABLED'
+        ) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __PS_BASE_URI__ . 'module/payment4/verify';
     }
 
     /**
      * Get the validated language code
+     *
      * @return string Language code (e.g., "EN", "FA")
      */
     private function getLanguageCode(): string
@@ -158,7 +168,7 @@ class Payment4ExternalModuleFrontController extends ModuleFrontController
             if ($this->context->language && !empty($this->context->language->iso_code)) {
                 $prestashopLanguage = $this->context->language->iso_code;
             } else {
-                $defaultLangId = (int)Configuration::get('PS_LANG_DEFAULT');
+                $defaultLangId = (int) Configuration::get('PS_LANG_DEFAULT');
                 $languageObj = new Language($defaultLangId);
                 if ($languageObj->iso_code) {
                     $prestashopLanguage = $languageObj->iso_code;
@@ -173,6 +183,7 @@ class Payment4ExternalModuleFrontController extends ModuleFrontController
             // Check if the response is valid
             if ($response === false) {
                 PrestaShopLogger::addLog('Failed to fetch languages JSON from ' . $url, 3);
+
                 return $language; // Return default "EN"
             }
 
@@ -180,6 +191,7 @@ class Payment4ExternalModuleFrontController extends ModuleFrontController
             $data = json_decode($response, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 PrestaShopLogger::addLog('Invalid JSON response from ' . $url, 3);
+
                 return $language; // Return default "EN"
             }
 
@@ -189,7 +201,6 @@ class Payment4ExternalModuleFrontController extends ModuleFrontController
                     $language = $prestashopLanguage;
                 }
             }
-
         } catch (Exception $e) {
             PrestaShopLogger::addLog('Error fetching language code: ' . $e->getMessage(), 3);
         }
@@ -236,6 +247,4 @@ class Payment4ExternalModuleFrontController extends ModuleFrontController
 
         return false;
     }
-
-
 }

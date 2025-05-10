@@ -17,7 +17,9 @@
  * @copyright Payment4 2025
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
-
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 /**
  * This Controller receive customer after approval on bank payment page
  */
@@ -38,7 +40,7 @@ class Payment4VerifyModuleFrontController extends ModuleFrontController
                 $this->context->link->getPageLink(
                     'order',
                     true,
-                    (int)$this->context->language->id,
+                    (int) $this->context->language->id,
                     [
                         'step' => 1,
                     ]
@@ -51,7 +53,7 @@ class Payment4VerifyModuleFrontController extends ModuleFrontController
                 $this->context->link->getPageLink(
                     'order',
                     true,
-                    (int)$this->context->language->id,
+                    (int) $this->context->language->id,
                     [
                         'step' => 1,
                     ]
@@ -59,45 +61,50 @@ class Payment4VerifyModuleFrontController extends ModuleFrontController
             );
         }
         $paymentUid = Tools::getValue('paymentUid', null);
-        if ( ! is_null($paymentUid)) {
+        if (!is_null($paymentUid)) {
             $amount = $this->context->cart->getOrderTotal(true);
 
-            $url      = "https://service.payment4.com/api/v1/payment/verify";
-            $headers  = [
-                "x-api-key: " . Configuration::get(Payment4::PAYMENT4_API_KEY),
-                "Content-Type: application/json",
+            $url = 'https://service.payment4.com/api/v1/payment/verify';
+            $headers = [
+                'x-api-key: ' . Configuration::get(Payment4::PAYMENT4_API_KEY),
+                'Content-Type: application/json',
             ];
             $currency = $this->context->currency->iso_code;
-            if ($currency === "IRR") {
-                $currency = "IRT";
-                (int)$amount /= 10;
+            if ($currency === 'IRR') {
+                $currency = 'IRT';
+                (int) $amount /= 10;
             }
 
             $payload = [
-                "paymentUid" => $paymentUid,
-                "amount"     => $amount,
-                "currency"   => $currency,
+                'paymentUid' => $paymentUid,
+                'amount' => $amount,
+                'currency' => $currency,
             ];
 
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
 
             $response = curl_exec($ch);
-            $err      = curl_error($ch);
+            $err = curl_error($ch);
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
 
             $responseData = json_decode($response);
 
             if ($err) {
-                $this->errors[] = $this->module->getTranslator()->trans('Error Connecting to Payment Gateway', [], 'Modules.Payment4.Verify');
+                $this->errors[] = $this->module->getTranslator()->trans(
+                    'Error Connecting to Payment Gateway',
+                    [],
+                    'Modules.Payment4.Verify'
+                );
                 $this->errors[] = $err;
+
                 return;
             }
-            if ($httpcode == 400 && ! $responseData->status) {
+            if ($httpcode == 400 && !$responseData->status) {
                 $this->errors[] = $responseData->errorCode;
                 $this->errors[] = $responseData->message;
 
@@ -105,34 +112,38 @@ class Payment4VerifyModuleFrontController extends ModuleFrontController
             }
 
             // http code is 200 Process the payment data
-            $paymentStatus    = $responseData->paymentStatus;
+            $paymentStatus = $responseData->paymentStatus;
             $amountDifference = $responseData->amountDifference ?? 0;
-            $verified         = $responseData->verified;
+            $verified = $responseData->verified;
             $message = json_encode([
-                'Payment Status'    => $paymentStatus,
+                'Payment Status' => $paymentStatus,
                 'Amount Difference' => $amountDifference,
-                'Verified'          => $verified ? 'Yes' : 'No',
+                'Verified' => $verified ? 'Yes' : 'No',
                 'Transaction ID' => $paymentUid,
             ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
             if ($verified) {
                 // Validate cart
-                $cartId = (int)$this->context->cart->id;
-                if ($cartId <= 0 || ! Validate::isLoadedObject($this->context->cart)) {
-                    $this->errors[] = $this->module->getTranslator()->trans('Cart cannot be loaded', [], 'Modules.Payment4.Verify');
+                $cartId = (int) $this->context->cart->id;
+                if ($cartId <= 0 || !Validate::isLoadedObject($this->context->cart)) {
+                    $this->errors[] = $this->module->getTranslator()->trans(
+                        'Cart cannot be loaded',
+                        [],
+                        'Modules.Payment4.Verify'
+                    );
 
                     return;
                 }
                 $this->module->validateOrder(
-                    (int)$this->context->cart->id,
-                    (int)$this->getOrderState(),
-                    (float)$this->context->cart->getOrderTotal(true, Cart::BOTH),
+                    (int) $this->context->cart->id,
+                    (int) $this->getOrderState(),
+                    (float) $this->context->cart->getOrderTotal(true, Cart::BOTH),
                     'Payment4',
                     $message,
                     [
-                        'transaction_id'    => $paymentUid,
+                        'transaction_id' => $paymentUid,
                     ],
-                    (int)$this->context->currency->id,
+                    (int) $this->context->currency->id,
                     false,
                     $customer->secure_key
                 );
@@ -141,17 +152,20 @@ class Payment4VerifyModuleFrontController extends ModuleFrontController
                     $this->context->link->getPageLink(
                         'order-confirmation',
                         true,
-                        (int)$this->context->language->id,
+                        (int) $this->context->language->id,
                         [
-                            'id_cart'   => (int)$this->context->cart->id,
-                            'id_module' => (int)$this->module->id,
-                            'id_order'  => (int)$this->module->currentOrder,
-                            'key'       => $customer->secure_key,
+                            'id_cart' => (int) $this->context->cart->id,
+                            'id_module' => (int) $this->module->id,
+                            'id_order' => (int) $this->module->currentOrder,
+                            'key' => $customer->secure_key,
                         ]
                     )
                 );
             } else {
-                $this->errors[] = $this->module->getTranslator()->trans('Your Payment is not confirmed. Payment Status: ', [], 'Modules.Payment4.Verify') . $paymentStatus;
+                $this->errors[] = $this->module->getTranslator()->trans(
+                    'Your Payment is not confirmed. Payment Status: ', [],
+                    'Modules.Payment4.Verify'
+                ) . $paymentStatus;
             }
         }
     }
@@ -199,7 +213,7 @@ class Payment4VerifyModuleFrontController extends ModuleFrontController
      */
     private function getOrderState()
     {
-        return (int)Configuration::get('PS_OS_WS_PAYMENT');
+        return (int) Configuration::get('PS_OS_WS_PAYMENT');
     }
 
     /**

@@ -24,7 +24,7 @@ if (!defined('_PS_VERSION_')) {
 /**
  * module upgrade file
  *
- * @param  Payment4  $module
+ * @param Payment4 $module
  *
  * @return bool
  */

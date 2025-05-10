@@ -20,7 +20,7 @@
 {extends file='customer/page.tpl'}
 
 {block name='page_title'}
-  <h1 class="h1">{$moduleDisplayName} - {l s='Transactions' d='Modules.Payment4.Account'}</h1>
+  <h1 class="h1">{$moduleDisplayName|escape:'htmlall':'UTF-8'} - {l s='Transactions' d='Modules.Payment4.Account'}</h1>
 {/block}
 
 {block name='page_content'}
@@ -38,11 +38,11 @@
       <tbody>
       {foreach from=$orderPayments item=orderPayment}
         <tr>
-          <td>{$orderPayment.order_reference}</td>
-          <td>{$orderPayment.payment_method}</td>
-          <td>{$orderPayment.transaction_id}</td>
-          <td>{$orderPayment.amount_formatted}</td>
-          <td>{$orderPayment.date_formatted}</td>
+          <td>{$orderPayment.order_reference|escape:'htmlall':'UTF-8'}</td>
+          <td>{$orderPayment.payment_method|escape:'htmlall':'UTF-8'}</td>
+          <td>{$orderPayment.transaction_id|escape:'htmlall':'UTF-8'}</td>
+          <td>{$orderPayment.amount_formatted|escape:'htmlall':'UTF-8'}</td>
+          <td>{$orderPayment.date_formatted|escape:'htmlall':'UTF-8'}</td>
         </tr>
       {/foreach}
       </tbody>
