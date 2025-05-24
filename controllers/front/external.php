@@ -84,6 +84,7 @@ class Payment4ExternalModuleFrontController extends ModuleFrontController
         $payload = [
             'amount' => $amount,
             'callbackUrl' => $callback_base_url,
+            'webhookUrl' => $callback_base_url,
             'language' => $this->getLanguageCode(),
             'currency' => $currency,
             'sandBox' => (bool) Configuration::get(Payment4::PAYMENT4_SANDBOX_MODE),
@@ -91,6 +92,7 @@ class Payment4ExternalModuleFrontController extends ModuleFrontController
 
         if (!empty($callback_params)) {
             $payload['callbackParams'] = $callback_params;
+            $payload['webhookParams'] = $callback_params;
         }
 
         $ch = curl_init($url);
