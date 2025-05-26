@@ -123,6 +123,11 @@ class Payment4VerifyModuleFrontController extends ModuleFrontController
             ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
             if ($verified) {
+                if (strtolower($paymentStatus) === 'success') {
+                    $orderStatus = (int) $this->getOrderState();
+                }else {
+                    $orderStatus = (int) Configuration::get('PAYMENT4_ACCEPTABLE');
+                }
                 // Validate cart
                 $cartId = (int) $this->context->cart->id;
                 if ($cartId <= 0 || !Validate::isLoadedObject($this->context->cart)) {
@@ -136,7 +141,7 @@ class Payment4VerifyModuleFrontController extends ModuleFrontController
                 }
                 $this->module->validateOrder(
                     (int) $this->context->cart->id,
-                    (int) $this->getOrderState(),
+                    $orderStatus,
                     (float) $this->context->cart->getOrderTotal(true, Cart::BOTH),
                     'Payment4',
                     $message,

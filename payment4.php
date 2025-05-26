@@ -447,18 +447,28 @@ class Payment4 extends PaymentModule
     private function installConfiguration()
     {
         $order_mismatch = new OrderState();
-        $order_mismatch->name = array_fill(0, 10, 'Payment4 Order is Mismatch');
+        $order_mismatch->name = array_fill(0, 10, 'Payment4 Order Mismatch');
         $order_mismatch->send_email = 0;
         $order_mismatch->invoice = 0;
-        $order_mismatch->color = '#8f0621';
-        $order_mismatch->unremovable = false;
+        $order_mismatch->color = '#E74C3C';
+        $order_mismatch->unremovable = true;
         $order_mismatch->logable = 0;
         $order_mismatch->add();
+
+        $order_acceptable = new OrderState();
+        $order_acceptable->name = array_fill(0, 10, 'Payment4 Order Acceptable');
+        $order_acceptable->send_email = 0;
+        $order_acceptable->invoice = 0;
+        $order_acceptable->color = '#5e48ff';
+        $order_acceptable->unremovable = true;
+        $order_acceptable->logable = 0;
+        $order_acceptable->add();
 
         return (bool) Configuration::updateGlobalValue(static::PAYMENT4_EXTERNAL_ENABLED, '1')
             && (bool) Configuration::updateGlobalValue(static::PAYMENT4_SANDBOX_MODE, '0')
             && (bool) Configuration::updateGlobalValue(static::PAYMENT4_API_KEY, '')
-            && (bool) Configuration::updateValue('PAYMENT4_MISMATCH', $order_mismatch->id);
+            && (bool) Configuration::updateGlobalValue('PAYMENT4_MISMATCH', $order_mismatch->id)
+            && (bool) Configuration::updateGlobalValue('PAYMENT4_ACCEPTABLE', $order_acceptable->id);
     }
 
     /**
