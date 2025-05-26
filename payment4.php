@@ -446,9 +446,19 @@ class Payment4 extends PaymentModule
      */
     private function installConfiguration()
     {
+        $order_mismatch = new OrderState();
+        $order_mismatch->name = array_fill(0, 10, 'Payment4 Order is Mismatch');
+        $order_mismatch->send_email = 0;
+        $order_mismatch->invoice = 0;
+        $order_mismatch->color = '#8f0621';
+        $order_mismatch->unremovable = false;
+        $order_mismatch->logable = 0;
+        $order_mismatch->add();
+
         return (bool) Configuration::updateGlobalValue(static::PAYMENT4_EXTERNAL_ENABLED, '1')
             && (bool) Configuration::updateGlobalValue(static::PAYMENT4_SANDBOX_MODE, '0')
-            && (bool) Configuration::updateGlobalValue(static::PAYMENT4_API_KEY, '');
+            && (bool) Configuration::updateGlobalValue(static::PAYMENT4_API_KEY, '')
+            && (bool) Configuration::updateValue('PAYMENT4_MISMATCH', $order_mismatch->id);
     }
 
     /**

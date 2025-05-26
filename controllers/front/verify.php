@@ -164,7 +164,7 @@ class Payment4VerifyModuleFrontController extends ModuleFrontController
             } elseif (strtolower($paymentStatus) === 'mismatch') {
                 $this->module->validateOrder(
                     (int) $this->context->cart->id,
-                    (int) Configuration::get('PS_CHECKOUT_STATE_PARTIALLY_PAID'),
+                    (int) Configuration::get('PAYMENT4_MISMATCH'),
                     (float) $this->context->cart->getOrderTotal(true, Cart::BOTH),
                     'Payment4',
                     $message,
